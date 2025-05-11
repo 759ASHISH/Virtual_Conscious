@@ -1,0 +1,40 @@
+# templates/index.html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Assistant</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        #chatbox { width: 100%; height: 300px; border: 1px solid #ccc; overflow-y: scroll; margin-bottom: 10px; padding: 10px; }
+        input[type="text"] { width: 80%; padding: 10px; }
+        button { padding: 10px; }
+    </style>
+</head>
+<body>
+    <h2>AI Assistant (LLaMA 3.2 via Ollama)</h2>
+    <div id="chatbox"></div>
+    <input type="text" id="user_input" placeholder="Type your message...">
+    <button onclick="sendMessage()">Send</button>
+
+    <script>
+        async function sendMessage() {
+            const input = document.getElementById("user_input");
+            const message = input.value;
+            if (!message) return;
+            
+            const chatbox = document.getElementById("chatbox");
+            chatbox.innerHTML += `<b>You:</b> ${message}<br>`;
+            input.value = "";
+
+            const res = await fetch("/chat", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message })
+            });
+            const data = await res.json();
+            chatbox.innerHTML += `<b>AI:</b> ${data.response}<br>`;
+            chatbox.scrollTop = chatbox.scrollHeight;
+        }
+    </script>
+</body>
+</html>
